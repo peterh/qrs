@@ -29,6 +29,8 @@ use Qrs;
 
 my $j = AnyEvent->condvar;
 
+$SIG{'INT'} = sub { $j->broadcast };
+
 {
     my $cfgfile;
 
