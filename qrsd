@@ -41,6 +41,8 @@ $SIG{'INT'} = sub { $j->broadcast };
 
     read_config $cfgfile => my %cfg;
 
+    -d $cfg{core}{store} or die("$cfgfile 'store' is not a valid directory\n");
+
     # Turn a single client into an arrayref:
     $cfg{core}{client} = [$cfg{core}{client}] unless (ref($cfg{core}{client}));
 
@@ -48,6 +50,7 @@ $SIG{'INT'} = sub { $j->broadcast };
                       password => $cfg{core}{password},
                       server   => $cfg{core}{server},
                       client   => $cfg{core}{client},
+                      store    => $cfg{core}{store},
                       signal   => $j,
                      );
 }

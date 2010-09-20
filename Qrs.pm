@@ -4,6 +4,7 @@ use Moose;
 
 use 5.10.0;
 use Time::Piece;
+use File::Spec;
 
 use AnyEvent;
 use AnyEvent::XMPP::Client;
@@ -13,6 +14,8 @@ has 'signal' => ( is => 'ro', required => 1 );
 has 'user' => ( is => 'ro', isa => 'Str', required => 1 );
 has 'password' => ( is  => 'ro', isa  => 'Str', required => 1 );
 has 'server' => ( is => 'ro', isa => 'Maybe[Str]' );
+
+has 'store' => ( is => 'ro', isa => 'Str', required => 1 );
 
 has 'client' => ( is => 'rw', isa => 'ArrayRef[Str]' );
 
@@ -86,6 +89,17 @@ sub BUILD {
         }
     }
     $self->xmpp->start();
+}
+
+sub store_file {
+    my ($self, $jid, $plugin) = @_;
+
+    $jid =~ s[/.*$][];    # Filter out client identifier
+
+    my $dir = File::Spec->catdir($self->store, $jid);
+    -d $dir or mkdir($dir);
+
+    return File::Spec->catfile($dir, $plugin);
 }
 
 1;
