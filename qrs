@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+use 5.10.0;
+use strict;
+use warnings;
+
+use local::lib;
+use Getopt::Long;
+use Pod::Usage;
+use Config::Std;
+use AnyEvent;
+
+=head1 NAME
+
+qrs - Quick-and-dirty Reminder System
+
+=head1 SYNOPSIS
+
+qrs --config /path/to/qrs.cfg
+
+=head1 DESCRIPTION
+
+This program connects to a Jabber server, and waits for commands
+from allowed users.
+
+=cut
+
+use Qrs;
+
+my $j = AnyEvent->condvar;
+
+{
+    my $cfgfile;
+
+    GetOptions("config=s" => \$cfgfile) or pod2usage();
+    defined($cfgfile) or pod2usage();
+
+    -r $cfgfile or die("Configuration file not found\n");
+
+    read_config $cfgfile => my %cfg;
+
+    # Turn a single client into an arrayref:
+    $cfg{core}{client} = [$cfg{core}{client}] unless (ref($cfg{core}{client}));
+
+    my $qrs = new Qrs(user     => $cfg{core}{user},
+                      password => $cfg{core}{password},
+                      server   => $cfg{core}{server},
+                      client   => $cfg{core}{client},
+                      signal   => $j,
+                     );
+}
+
+$j->wait;
