@@ -11,6 +11,9 @@ use IPC::Cmd qw/can_run run/;
 has 'qrs' => ( is => 'ro', isa => 'Qrs', required => 1 );
 
 has 'name' => ( is => 'ro', isa => 'Str', default => 'calc', init_arg => undef );
+has 'doc' => ( is => 'ro', isa => 'Str', init_arg => undef, default => 
+             "calc <expression> | Calculate <expression>\ncalc <have> ! <want> | Convert <have> to <want>\n".
+             "\nCalc is based on 'units'. See http://www.gnu.org/software/units/#examples for more information." );
 
 my $units = can_run('units') or die ("Cannot find units\n");
 

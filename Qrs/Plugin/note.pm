@@ -11,6 +11,11 @@ use Storable qw/nstore retrieve/;
 has 'qrs' => ( is => 'ro', isa => 'Qrs', required => 1 );
 
 has 'name' => ( is => 'ro', isa => 'Str', default => 'note', init_arg => undef );
+has 'doc' => ( is => 'ro', isa => 'Str', init_arg => undef, default => 
+             "note | List notes\nnote <note> | Display note <note>\n".
+             "note <note> <description> | Set note <note> to <description>\n".
+             "note <note> - | Delete note <note>" );
+
 
 sub do {
    my $self = shift;

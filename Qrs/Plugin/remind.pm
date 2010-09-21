@@ -13,6 +13,10 @@ has 'qrs' => ( is => 'ro', isa => 'Qrs', required => 1 );
 has 'name' => ( is => 'ro', isa => 'Str', default => 'remind', init_arg => undef );
 
 has 'seen' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
+has 'doc' => ( is => 'ro', isa => 'Str', init_arg => undef, default => 
+             "remind | Show all reminders\nremind <description> | Add reminder <description>\n".
+             "remind - <number> | Delete reminder <number>\nremind - | Delete all reminders\n".
+             "\nReminders will be sent to you whenever you log on." );
 
 sub BUILD {
    my $self = shift;
