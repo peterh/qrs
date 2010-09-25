@@ -31,6 +31,10 @@ sub BUILD {
     my %dispatch;
 
     $self->xmpp->reg_cb(
+        session_ready => sub {
+            my ($cl, $acc) = @_;
+            $cl->set_presence(undef, 'Send me "help" for info', 10);
+        },
         message => sub {
             my ($cl, $acc, $message) = @_;
             
@@ -50,9 +54,6 @@ sub BUILD {
                 $reply->add_body("Unknown command: $command");
                 $reply->send();
             }
-
-            my $status = "Last request at ".localtime()->strftime();
-            $cl->set_presence(undef, $status, 10);
         },
         contact_request_subscribe => sub {
             my ($cl, $acc, $r, $contact, $message) = @_;
