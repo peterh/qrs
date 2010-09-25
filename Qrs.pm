@@ -29,11 +29,21 @@ sub BUILD {
     $self->xmpp->add_account($self->user, $self->password, $self->server);
 
     my %dispatch;
+    my $reconnect_timer;
 
     $self->xmpp->reg_cb(
         session_ready => sub {
             my ($cl, $acc) = @_;
             $cl->set_presence(undef, 'Send me "help" for info', 10);
+            undef $reconnect_timer;
+        },
+        disconnect => sub {
+            my ($cl, $acc, $host, $port, $msg) = @_;
+            $reconnect_timer = AnyEvent->timer(
+                after => 10,
+                interval => 120,
+                cb => sub { $cl->update_connections; }
+            );
         },
         message => sub {
             my ($cl, $acc, $message) = @_;
